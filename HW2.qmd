@@ -1,0 +1,85 @@
+---
+title: "HW2"
+format: html
+---
+
+How do FEMA National Risk Index scores for counties in California compare to those in other states? 
+
+```{r}
+# Import libraries
+library(tidyverse)
+library(ggplot2)
+
+```
+
+```{r}
+# Read in data
+risk <- read_csv(here::here("data/National_Risk_Index_Counties_807384124455672111.csv"))
+```
+
+```{r}
+# Identify U.S. territories (not states)
+table(risk$`State Name`)
+```
+
+```{r}
+# Remove U.S. territories (not states) from `risk`
+risk_US <- risk |>
+  filter(! `State Name` %in% c("American Samoa", "Guam", "Northern Mariana Islands", "Puerto Rico", "Virgin Islands"))
+```
+
+
+National Risk Index - Score - Composite, National Risk Index - Rating - Composite
+
+```{r}
+high_risk_amount <- risk_US |>
+  group_by(`State Name`) |>
+  summarize(total_high_scores = sum(`National Risk Index - Rating - Composite` == "Relatively High", na.rm = TRUE))
+
+```
+
+
+
+```{r fig.height=9, fig.width=10}
+#| fig-alt: "Linerange plot of the number of counties with 'Relatively High' FEMA National Risk Index scores for all U.S. states, where California has the most high-risk counties."
+high_risk_amount |>
+  ggplot(aes(x = reorder(`State Name`, total_high_scores),
+             y = total_high_scores)) +
+  geom_linerange(aes(ymin = 0, ymax = total_high_scores)) +
+  geom_point(color = "red") +
+  geom_text(aes(label = total_high_scores, hjust = -0.8)) + 
+  labs(x = "States",
+       y = "Number of Counties Rated 'Relatively High'",
+       title = "Number of Counties with 'Relatively High' FEMA Risk in each State",
+       subtitle = "California has the most counties with a 'Relatively High' FEMA National Risk Index score",
+       caption = "Data: FEMA National Risk Index (2025 Release)") +
+  coord_flip() +
+  theme_minimal() +
+  theme(axis.title.y = element_blank())
+
+
+```
+
+## V. Answer some questions
+
+1. What are your variables of interest and what kinds of data (e.g. numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?
+
+-   
+
+2. How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?
+
+-   
+
+3. Summarize your main finding in no more than two sentences.
+
+-   
+
+4. What modifications did you make to this visualization to make it more easily readable?
+
+-   
+
+5. Is there anything you wanted to implement, but didn’t know how? If so, please describe.
+
+-   
+
+
