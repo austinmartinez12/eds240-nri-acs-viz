@@ -1,9 +1,13 @@
 ---
 title: "HW2"
+subtitle: "Visualizing FEMA NRI Data"
+description: "Assigned Wed 01/21/2026 | Due Wed 01/28/2026"
+author: "Austin Martinez"
+date: 01/28/2026
 format: html
 ---
 
-How do FEMA National Risk Index scores for counties in California compare to those in other states? 
+## How do FEMA National Risk Index scores for counties in California compare to those in other states?
 
 ```{r}
 # Import libraries
@@ -12,9 +16,11 @@ library(ggplot2)
 
 ```
 
+### Data Cleaning
+
 ```{r}
 # Read in data
-risk <- read_csv(here::here("data/National_Risk_Index_Counties_807384124455672111.csv"))
+risk <- read_csv(here::here("data/National_Risk_Index_Counties_807384124455672111.csv"), show_col_types = FALSE)
 ```
 
 ```{r}
@@ -29,19 +35,21 @@ risk_US <- risk |>
 ```
 
 
-National Risk Index - Score - Composite, National Risk Index - Rating - Composite
+### Data Preporation 
 
 ```{r}
+# Count counties with "Relatively High" risk rating by state
 high_risk_amount <- risk_US |>
   group_by(`State Name`) |>
   summarize(total_high_scores = sum(`National Risk Index - Rating - Composite` == "Relatively High", na.rm = TRUE))
-
 ```
 
-
+### Data Visualization
 
 ```{r fig.height=9, fig.width=10}
 #| fig-alt: "Linerange plot of the number of counties with 'Relatively High' FEMA National Risk Index scores for all U.S. states, where California has the most high-risk counties."
+
+# Plot the number of counties rated 'Relatively High' in each state with a line graph
 high_risk_amount |>
   ggplot(aes(x = reorder(`State Name`, total_high_scores),
              y = total_high_scores)) +
@@ -56,30 +64,26 @@ high_risk_amount |>
   coord_flip() +
   theme_minimal() +
   theme(axis.title.y = element_blank())
-
-
 ```
 
 ## V. Answer some questions
 
-1. What are your variables of interest and what kinds of data (e.g. numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?
+1.  What are your variables of interest and what kinds of data (e.g. numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?
 
--   
+-   My variables of interest are `National Risk Index - Rating - Composite` and `State Name`. `State Name` is categorical and `National Risk Index - Rating - Composite`is categorical (ordinal).
 
-2. How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?
+2.  How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?
 
--   
+-   I originally wanted to do a bar graph, but that would have made my plot way to cluttered. To reduce the clutter I decided to use a lollipop graph because makes it easy for the viewer to compare values across states. The points and numbers at the ends of the lines make it much easier to compare actual values. This chart allows the viewer to see how FEMA National Risk Index scores for counties in California compare to those in other states. I could have used a bar graph or a choropleth map. I chose this lollipop graph because it is more clear and simple to understand.
 
-3. Summarize your main finding in no more than two sentences.
+3.  Summarize your main finding in no more than two sentences.
 
--   
+-   California has the most counties that received a relatively high FEMA risk rating. It had 22 counties receive a relatively high FEMA risk rating.
 
-4. What modifications did you make to this visualization to make it more easily readable?
+4.  What modifications did you make to this visualization to make it more easily readable?
 
--   
+-   I first started off with points. To make this visualization easier to read I added lines connecting the point to zero, and I made the points red. This allows the viewer to easily see which state corresponds to which point and makes the endpoint of each line more visible. I also added the number each point corresponds to. This makes it easier for the viewer to tell the number of counties in each state received a relatively high rating. The plot was also made taller and wider, so the state names aren't squished.
 
-5. Is there anything you wanted to implement, but didn’t know how? If so, please describe.
+5.  Is there anything you wanted to implement, but didn’t know how? If so, please describe.
 
--   
-
-
+-   I want to make the state names bigger. Also, the state names seem to be gray; I want them to be black.
