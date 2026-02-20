@@ -97,6 +97,21 @@ risk_by_race <- clean_risk_ethnicity_joined |>
     very_high_pop = sum(estimate[national_risk_index_rating_composite == "Very High"], na.rm = TRUE),
     pct_very_high = 100 * very_high_pop / sum(estimate, na.rm = TRUE)
   )
+
+# Rename labels
+risk_by_race <- risk_by_race |>
+  mutate(label = case_when(
+    label == "American Indian and Alaska Native alone" ~ "American Indian and Alaska Native",
+    label == "Asian alone" ~ "Asian",
+    label == "Black or African American alone" ~ "Black or African American",
+    label == "Hispanic or Latino:" ~ "Hispanic or Latino",
+    label == "Native Hawaiian and Other Pacific Islander alone" ~ "Native Hawaiian and Other Pacific Islander",
+    label == "Not Hispanic or Latino:" ~ "Not Hispanic or Latino",
+    label == "Some Other Race alone" ~ "Some Other Race", 
+    label == "White alone" ~ "White", 
+    label == "Two or More Races:" ~ "Two or More Races",
+    TRUE ~ label
+    ))
 ```
 
 ### Data Visualization
